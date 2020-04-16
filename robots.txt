@@ -4,3 +4,6 @@
 User-agent: *
 Disallow:
 robocop
+
+exercise...
+adding new user: LucasN14
