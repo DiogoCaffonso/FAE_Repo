@@ -1,0 +1,139 @@
+\documentclass[14pt]{extarticle}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\title{Introdução à Análise de Dados FAE Trabalho 2}
+\author{}
+\date{Diogo Caffonso\\Matrícula: 202010115711}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+
+\setcounter{page}{1}
+
+\section*{\hspace{-1cm}Exercício 1:}
+
+\hspace{0.5cm}
+Para o método dos mínimos quadrados, existe uma função $S(a,b)$, sendo $a$ e $b$ os coeficientes angular e linear da reta proposta, respectivamente, tal que esta deva ser minimizada para garantir a melhor reta que se adéque aos pontos. Para quando se tratam de dados tais que os erros para $y_{i}$ variam, isto é, para o MMQ ponderado, a função $S(a,b)$ é dada por:\large$$S(a,b)=\sum_{i=1}^{N}\left[\frac{y_{i}-(ax_{i}+b)}{\sigma_{i}}\right]^{2}>0$$\normalsize
+
+Expandindo a equação, pode-se ver que:\large$$\frac{1}{\sigma^{2}}=\sum_{i=1}^{N}\frac{1}{\sigma_{i}^{2}}\hspace{0.5cm}\&\hspace{0.5cm}w_{i}=\left(\frac{\sigma}{\sigma_{i}}\right)^{2}\to\sum_{i=1}^{N}w_{i}=1$$\normalsize
+
+Visto que $\sigma^{2}$ e $\overline{x^{2}}$ são positivos, $a$ e $b$ são dados pelas mesmas expressões que no caso de um ajuste linear não ponderado, isto é:\large$$
+\begin{cases}
+    a = \frac{\sigma_{xy}}{\sigma_{x}^{2}}=r\frac{\sigma_{y}}{\sigma_{x}} \\
+    b = \overline{y} - a\overline{x}
+\end{cases}
+$$\normalsize
+
+Reescrevendo os parâmetros, temos:\large$$
+\begin{cases}
+    a = \frac{\sigma^{2}}{\sigma_{x}^{2}}\sum_{i=1}^{N}\frac{(x_{i}-\overline{x})}{\sigma_{i}^{2}}y_{i} \\
+    b = \sum_{i=1}^{N}\frac{\sigma^{2}}{\sigma_{x}^{2}}y_{i}-a\overline{x}
+\end{cases}$$\normalsize
+
+Agora, de acordo com a fórmula de propagação de erros, as incertezas, desta forma, são dadas por:\large$$
+\begin{cases}
+    \sigma_{a}^{2}=\frac{\sigma^{2}}{\sigma_{x}^{2}} \\[0.5cm]
+    \sigma_{b}^{2}=\overline{x^{2}}\sigma_{a}^{2}
+\end{cases}$$\normalsize
+
+E, para minimizar a função $S(a,b)$, devem ser tiradas suas derivadas parciais em relação a $a$ e $b$ e igualar a zero, ou seja:\large$$
+\begin{cases}
+    \frac{\partial S}{\partial a}=-2\sum_{i=1}^{N}\frac{x_{i}}{\sigma_{i}^{2}}\left(y_{i}-ax_{i}-b\right)=0 \\[0.3cm]
+    \frac{\partial S}{\partial b}=-2\sum_{i=1}^{N}\frac{1}{\sigma_{i}^{2}}\left(y_{i}-ax_{i}-b\right)=0
+\end{cases}$$\normalsize
+
+Este sistema pode ser reescrito da seguinte forma:\large$$
+\begin{cases}
+    \left(\sum_{i=1}^{N}\frac{x_{i}^{2}}{\sigma_{i}^{2}}\right)a+\left(\sum_{i=1}^{N}\frac{x_{i}}{\sigma_{i}^{2}}\right)b=\sum_{i=1}^{N}\frac{x_{i}y_{i}}{\sigma_{i}^{2}}\\[0.5cm]
+    \left(\sum_{i=1}^{N}\frac{x_{i}}{\sigma_{i}^{2}}\right)a+\left(\sum_{i=1}^{N}\frac{1}{\sigma_{i}^{2}}\right)b=\sum_{i=1}^{N}\frac{y_{i}}{\sigma_{i}^{2}}
+\end{cases}$$\normalsize
+e pode ser simplificado para:\large$$
+\begin{cases}
+    \overline{x^{2}}a+\overline{x}b=\overline{xy}\\
+    \overline{x}a+b=\overline{y}
+\end{cases}$$\normalsize
+que, por fim, entrega as seguintes soluções para $a$ e para $b$:\large$$a=\frac{\sigma_{xy}}{\sigma_{x}^{2}}\hspace{0.5cm}\text{\&}\hspace{0.5cm}b=\overline{y}-a\overline{x}$$\normalsize com incertezas:\large$$\sigma_{a}=\frac{\sigma}{\sigma_{x}}\hspace{0.5cm}\text{\&}\hspace{0.5cm}\sigma_{b}=\sigma_{a}\sqrt{\overline{x^{2}}}$$
+\newpage
+
+\section*{\hspace{-1cm}Exercício 2:}
+
+\hspace{0.5cm}
+Sabemos que:
+
+\large
+$$\sigma=\frac{N_{\text{T}}-N_{\text{B}}}{\mathcal{L}}$$
+
+\normalsize
+
+Onde:
+
+\hspace{0.5cm}
+
+$N_{\text{total}} =N_{T}= 2567,0 \text{ eventos}$
+
+$N_{\text{background}} =N_{B}= 1223,5 \text{ eventos}$
+
+$\mathcal{L} = 25 \text{ fb}^{-1}$
+
+\hspace*{0.5cm}
+
+Para a incerteza estatística $\Delta\sigma_{est}$, faz-se:\large $$\Delta\sigma_{est}=\frac{\sqrt{\Delta N^{2}_{T}+\Delta N^{2}_{B}}}{\mathcal{L}}$$\\
+\normalsize em que, para a distribuição de Poisson: $\Delta N_{T} = \sqrt{N_{T}}$ e $\Delta N_{B} = \sqrt{N_{B}}$.
+
+\vspace{1em}
+
+Agora, para a incerteza sistemática $\Delta\sigma_{sis}$, basta fazer:\large$$\Delta\sigma_{sis}=10\%\sigma$$
+\normalsize que leva ao resultado:
+\large $$\sigma=\left(53,74\pm2,46_{\text{(estatística)}}\pm5,37_{\text{(sistemática)}}\right)\text{fb}$$
+\normalsize
+
+\newpage
+
+\section*{\hspace{-1cm}Exercício 3:}
+
+\hspace*{0.5cm}
+
+A distribuição de Poisson pode ser dada pela forma:
+
+\large$$P_{(n;s,b)}=\frac{(s+b)^{n}e^{-(s+b)}}{n!}$$\normalsize
+
+\vspace{1em}
+
+Do problema, temos que $n=0$ e $b=0,07$. Assim, a equação se reduz a: \large$$P_{(n=0;s,b=0,07)}=e^{-(s+0,07)}$$\normalsize
+
+\vspace{1em}
+
+Agora, para calcular até quantos eventos esperados podemos excluir com 95\% de C.L, fazemos: \large$$P_{(n=0;s,b=0,07)}=e^{-(s+0,07)}=100\%-95\%=0,05$$\normalsize e, resolvendo para $s$, encontramos: \large $$s\simeq2,93$$\normalsize
+
+Ou seja, são previstos mais que 2,93 eventos.
+
+\newpage
+
+\section*{\hspace{-1cm}Exercício 4:}
+
+\hspace*{0.5cm}
+
+Para demonstrar que $\chi^{2}/ndf$ tender a 1 indica um bom fit, parte-se de: \large $$\chi^{2}=\sum_{i=1}^{n}\frac{(y_{i}-f(x_{i}))^{2}}{\sigma^{2}_{i}}$$\normalsize
+para incertezas iguais:\large $$\chi^{2}=\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(y_{i}-f(x_{i}))^{2}$$\normalsize
+
+Para quando $n\to\infty$, $\sigma^{2}$ pode ser aproximado por:\large $$\sigma^{2}\simeq\frac{1}{n}\sum_{i=1}^{n}(y_{i}-f_{v}(x_{i}))^{2}\to n\simeq\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(y_{i}-f_{v}(x_{i}))^{2}$$\normalsize em que $f_{v}(x_{i})$ é a função verdadeira. Por simplicidade, $f(x_{i})=f$. Então:\large $$n\simeq\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(y_{i}-f_{v}+f-f)^{2}=\frac{1}{\sigma^{2}}\sum_{i=1}^{n}[(y_{i}-f)+(f-f_{v})]^{2}=$$
+$$=\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(y_{i}-f)^{2}+\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(f-f_{v})^{2}+\frac{2}{\sigma^{2}}\sum_{i=1}^{n}(y_{i}-f)(f-f_{v})$$\normalsize
+
+\vspace{1em}
+
+Pode-se ver que o primeiro termo é igual a $\chi^{2}$. O terceiro termo se anula para quando $n\to\infty$. Para o segundo termo, temos que $(f-f_{v})^{2}\simeq \sigma^{2}_{f}$, que é a variância para a função ajustada, que também pode ser escrita da forma:\large $$\sigma^{2}_{f}=f^{2}_{1}\sigma^{2}_{a_{1}}+\ldots+f^{2}_{p}\sigma^{2}_{a_{p}}=\sum_{k=1}^{p}f_{k}^{2}\sigma^{2}_{a_{k}}=\sum^{p}_{k=1}f_{k}^{2}m_{kk}$$\normalsize
+assim, podemos ver que:\large $$\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(f-f_{v})^{2}=\frac{1}{\sigma^{2}}\sum_{i=1}^{n}\sigma^{2}_{f}=\frac{1}{\sigma^{2}}\sum_{i=1}^{n}\sum_{k=1}^{p}f_{k}^{2}m_{kk}=$$
+$$=\sum_{k=1}^{p}\sum_{i=1}^{n}\frac{f^{2}_{k}}{\sigma^{2}}m_{kk}=\sum_{k=1}^{p}M_{kk}m_{kk}$$\normalsize
+e, já que os parâmetros $a_{k}$ são independentes, $M_{kk}m_{kk}=1$. Ou seja:\large $$\frac{1}{\sigma^{2}}\sum_{i=1}^{n}(f-f_{v})^{2}=\sum_{k=1}^{p}1 = p$$\normalsize
+
+Assim, substituindo os três termos de volta, obtemos:\large$$n\simeq\chi^{2}+p+0\to \chi^{2}\simeq n-p=ndof\to\chi^{2}\simeq ndof\to$$
+$$\to\frac{\chi^{2}}{ndof}\simeq1$$\normalsize
+que mostra que, para quando $\chi^{2}/ndf$ tende a 1, o fit de uma dada função $f$ se mostra satisfatório.
+
+\end{documelldd
+
