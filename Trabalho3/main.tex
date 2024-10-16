@@ -1,0 +1,368 @@
+\documentclass[a4 paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+% Set target color model to RGB
+\usepackage[inner=2.0cm,outer=2.0cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage[rgb]{xcolor}
+\usepackage{verbatim}
+\usepackage{subcaption}
+\usepackage{amsgen,amsmath,amstext,amsbsy,amsopn,amssymb}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true, urlcolor=blue,  linkcolor=blue, citecolor=blue]{hyperref}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{rotating}
+%\usetikzlibrary{through,backgrounds}
+\hypersetup{%
+pdfauthor={Ashudeep Singh},%
+pdftitle={Homework},%
+pdfkeywords={Tikz,latex,bootstrap,uncertaintes},%
+pdfcreator={PDFLaTeX},%
+pdfproducer={PDFLaTeX},%
+}
+%\usetikzlibrary{shadows}
+% \usepackage[francais]{babel}
+\usepackage{booktabs}
+\usepackage{xcolor}
+% Definindo novas cores
+\definecolor{verde}{rgb}{0,0.5,0}
+% Configurando layout para mostrar codigos C++
+\usepackage{listings}
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small, 
+  keywordstyle=\color{blue}, 
+  stringstyle=\color{verde}, 
+  commentstyle=\color{red}, 
+  extendedchars=true, 
+  showspaces=false, 
+  showstringspaces=false, 
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true, 
+  backgroundcolor=\color{green!10},
+  breakautoindent=true, 
+  captionpos=b,
+  xleftmargin=0pt,
+}
+
+%%%%%% macros.tex
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{rem}[thm]{Remark}
+\numberwithin{equation}{section}
+
+\newcommand{\homework}[6]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf Introdução à Análise de dados em FAE \hfill {\small (#2)}} }
+       \vspace{6mm}
+       \hbox to 6.28in { {\Large \hfill #1  \hfill} }
+       \vspace{6mm}
+       \hbox to 6.28in { {\it Professores: {\rm #3} \hfill Name: {\rm #5} } }
+       %\hbox to 6.28in { {\it TA: #4  \hfill #6}}
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{#5 -- #1}{#5 -- #1}
+   \vspace*{4mm}
+}
+
+\newcommand{\problem}[2]{~\\\fbox{\textbf{#1}}\hfill \newline\newline}
+\newcommand{\subproblem}[1]{~\newline\textbf{(#1)}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\Hy}{\mathcal{H}}
+\newcommand{\VS}{\textrm{VS}}
+\newcommand{\solution}{~\newline\textbf{\textit{(Solução)}} }
+
+\newcommand{\bbF}{\mathbb{F}}
+\newcommand{\bbX}{\mathbb{X}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\0}{\mathbf{0}}
+%%%% macros.tex
+
+\begin{document}
+\homework{Exercícios - Aula ROOT}{15/10/2024}{Dilson, Eliza \& Maurício}{}{Diogo Gomes Santos Caffonso de Morais}
+
+\problem{EXERCÍCIO 1 }
+
+O código para o exercício foi:
+
+\begin{lstlisting}
+#include <iostream>
+#include <cmath>
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TGraph.h"
+#include "TAxis.h"
+#include "TMath.h"
+#include "Math/Integrator.h"
+
+double myFunc(double *x, double *par) {
+    double p0 = par[0];
+    double p1 = par[1];
+    return p0 * TMath::Sin(p1 * x[0]) / x[0];
+}
+
+void exercicio1() {
+        double p0 = 1.0;
+        double p1 = 2.0;
+        double x = 1.0;
+
+        TCanvas *c1 = new TCanvas("c1", "Function Plot", 800, 600);
+        TF1 *f1 = new TF1("f1", myFunc, 0.01, 10, 2);
+        f1->SetParameters(p0,p1);
+        f1->SetLineColor(kBlue);
+        f1->Draw();
+        c1->SaveAs("function_plot.png");
+
+        double func_value = f1->Eval(x);
+        std::cout << "Function value at x = 1: " << func_value << std::endl;
+
+        double dx = 1e-6;
+        double derivada = (f1->Eval(x + dx) - f1->Eval(x - dx)) / (2 * dx);
+        std::cout << "Derivative at x = 1: " << derivada << std::endl;
+
+        double integral = f1->Integral(0, 3);
+        std::cout << "Integral from 0 to 3: " << integral << std::endl;
+}
+
+\end{lstlisting}
+
+Executado o código acima, tive o seguinte output:
+
+\includegraphics[width=\linewidth]{ex1.png}
+\begin{center}
+    Figura 1: Gráfico da função $f_{1}(x)$.
+\end{center}
+
+Seguindo o comando do exercício:\large $$f_{1}(1)=0,909297$$ $$f_{1}^{'}(1)=-1,74159$$ $$\int_{0}^{3}f_{1}(x)dx=1,42469$$\normalsize
+
+\newpage
+
+\problem{EXERCÍCIO 2 }
+
+O código para o exercício foi:
+
+\begin{lstlisting}
+
+#include <iostream>
+#include <cmath>
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TGraph.h"
+#include "TAxis.h"
+#include "TMath.h"
+#include "Math/Integrator.h"
+#include "TGraphErrors.h"
+#include "TStyle.h"
+
+void exercicio2() {
+	std::ifstream dataFile("graphdata.txt");
+	std::ifstream errorFile("graphdata_error.txt");
+
+	const int nPoints = 10;
+	double x[nPoints], y[nPoints];
+	double ex[nPoints], ey[nPoints];
+
+	for (int i = 0; i < nPoints; ++i) {
+		dataFile >> x[i] >> y[i];
+	}
+
+	for (int i = 0; i < nPoints; ++i) {
+		errorFile >> x[i] >> y[i] >> ex[i] >> ey[i];
+	}
+
+	dataFile.close();
+	errorFile.close();
+
+	TCanvas *c1 = new TCanvas("c1", "Graph of Points", 800, 600);
+	TGraph *graph1 = new TGraph(nPoints, x, y);
+	graph1->SetMarkerStyle(21);
+	graph1->SetMarkerColor(kBlack);
+	graph1->SetTitle("Graph of Points;X;Y");
+	graph1->Draw("AP");
+	c1->SaveAs("graph_points.png");
+
+	TCanvas *c2 = new TCanvas("c2", "Graph with Line", 800, 600);
+	TGraph *graph2 = new TGraph(nPoints, x, y);
+	graph2->SetMarkerStyle(21);
+	graph2->SetMarkerColor(kBlack);
+	graph2->SetLineColor(kBlue);
+	graph2->SetLineWidth(2);
+	graph2->SetTitle("Graph with Line;X;Y");
+	graph2->Draw("APL");
+	c2->SaveAs("graph_with_line.png");
+
+	TCanvas *c3 = new TCanvas("c3", "Graph with Errors", 800, 600);
+	TGraphErrors *graph3 = new TGraphErrors(nPoints, x, y, ex, ey);
+	graph3->SetMarkerStyle(21);
+	graph3->SetMarkerColor(kBlack);
+	graph3->SetLineColor(kRed);
+	graph3->SetLineWidth(2);
+	graph3->SetTitle("Graph with Errors;X;Y");
+	graph3->Draw("AP");
+	c3->SaveAs("graph_with_errors.png");
+}
+
+\end{lstlisting}
+
+Executado o código acima, tive o seguinte output:
+
+\includegraphics[width=\linewidth]{ex21.png}
+\begin{center}
+    Figura 2: Gráfico de distribuição para os pontos.
+\end{center}
+
+\includegraphics[width=\linewidth]{ex23.png}
+\begin{center}
+    Figura 3: Gráfico de distribuição para os pontos, com linha que liga os pontos.
+\end{center}
+
+\includegraphics[width=\linewidth]{ex22.png}
+\begin{center}
+    Figura 4: Gráfico de distribuição para os pontos, com barra de erros.
+\end{center}
+
+\newpage
+
+\problem{EXERCÍCIO 3 }
+
+O código para o exercício foi:
+
+\begin{lstlisting}
+#include <iostream>
+#include <cmath>
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TGraph.h"
+#include "TAxis.h"
+#include "TMath.h"
+#include "Math/Integrator.h"
+#include "TRandom.h"
+
+void exercicio3() {
+
+	TH1F *h1 = new TH1F("h1", "Gaussian Distribution", 50, 0, 10);
+
+	TRandom *rand = new TRandom();
+	for (int i = 0; i < 10000; i++) {
+		h1->Fill(rand->Gaus(5, 2));  // Mean 5, Sigma 2
+	}
+
+	gStyle->SetOptStat("nemruoiks");
+	gStyle->SetStatX(0.9);
+	gStyle->SetStatY(0.9);
+	gStyle->SetStatW(0.2);
+	gStyle->SetStatH(0.3);
+
+	TCanvas *c1 = new TCanvas("c1", "Gaussian Histogram", 800, 600);
+
+	h1->Draw();
+
+	c1->Update();
+
+	TPaveStats *stats = (TPaveStats*)h1->GetListOfFunctions()->FindObject("stats");
+
+	if (stats) {
+		stats->SetName("mystats");
+
+		double skewness = h1->GetSkewness();
+		double kurtosis = h1->GetKurtosis();
+
+		stats->AddText(Form("Skewness = %.3f", skewness));
+		stats->AddText(Form("Kurtosis = %.3f", kurtosis));
+
+		stats->SetX1NDC(0.7);
+		stats->SetY1NDC(0.7);
+
+		c1->Modified();
+		c1->Update();
+	}
+
+	c1->SaveAs("gaussian_histogram.png");
+}
+\end{lstlisting}
+
+Executado o código acima, tive o seguinte output:
+
+\includegraphics[width=\linewidth]{ex3.png}
+\begin{center}
+    Figura 5: Histograma com os dados no statistic box.
+\end{center}
+
+\newpage
+
+\problem{EXERCÍCIO 4 }
+
+O código para o exercício foi:
+
+\begin{lstlisting}
+#include <iostream>
+#include <cmath>
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TGraph.h"
+#include "TAxis.h"
+#include "TMath.h"
+#include "Math/Integrator.h"
+#include "TRandom.h"
+
+void exercicio4() {
+
+	TCanvas *c1 = new TCanvas("c1", "Total Momentum Distribution", 800, 600);
+	TFile *file = TFile::Open("tree.root");
+	TTree *tree = (TTree*)file->Get("tree1");
+	TH1F *h1 = new TH1F("h1", "Total Momentum Distribution", 50, 0, 1000);
+	TH1F *h2 = new TH1F("h2", "Cut Momentum Distribution", 100, 100, 200);
+	float px, py, pz, e;
+	Int_t noE = 1e+5;
+
+	tree->SetBranchAddress("px", &px);
+	tree->SetBranchAddress("py", &py);
+	tree->SetBranchAddress("pz", &pz);
+	tree->SetBranchAddress("ebeam", &e);
+
+	for (Int_t i=0; i<noE; i++){
+		tree->GetEntry(i);
+		h1->Fill(e);
+	}
+
+	float e_mean = h1->GetMean();
+	for (Int_t i=0; i<noE; i++){
+		tree->GetEntry(i);
+		if (e > e_mean + 0.2){
+			float p = sqrt(px*px + py*py + pz*pz);
+			h2->Fill(p);
+		}	
+	}
+
+	h2->Draw();
+	c1->SaveAs("total_momentum_distribution.png");
+
+}
+\end{lstlisting}
+
+Executado o código acima, tive o seguinte output:
+
+\includegraphics[width=\linewidth]{ex4.png}
+\begin{center}
+    Figura 6: Histograma de momento total para a janela de energia sugerida.
+\end{center}
+
+
+\end{document} 
