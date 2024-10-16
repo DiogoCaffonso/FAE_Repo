@@ -48,12 +48,12 @@ void exercicio2() {
 
 	TCanvas *c3 = new TCanvas("c3", "Graph with Errors", 800, 600);
 	TGraphErrors *graph3 = new TGraphErrors(nPoints, x, y, ex, ey);
-	graph3->SetMarkerStyle(21);  // Black box
+	graph3->SetMarkerStyle(21);
 	graph3->SetMarkerColor(kBlack);
 	graph3->SetLineColor(kRed);
 	graph3->SetLineWidth(2);
 	graph3->SetTitle("Graph with Errors;X;Y");
-	graph3->Draw("AP");  // Draw points with error bars
+	graph3->Draw("AP");
 	c3->SaveAs("graph_with_errors.png");
 }
 
