@@ -31,7 +31,7 @@ void exercicio4() {
 	float e_mean = h1->GetMean();
 	for (Int_t i=0; i<noE; i++){
 		tree->GetEntry(i);
-		if (e > e_mean + 0.2){
+		if (e > e_mean + 0.2 || e < e_mean - 0.2){
 			float p = sqrt(px*px + py*py + pz*pz);
 			h2->Fill(p);
 		}	
