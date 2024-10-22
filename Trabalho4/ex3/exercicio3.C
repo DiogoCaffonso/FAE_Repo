@@ -11,7 +11,7 @@
 
 void exercicio3() {
 	TFile *file = TFile::Open("/home/cms-opendata/FAE_Repo/Trabalho4/ex3/DataSet_lowstat.root");
-	RooDataSet *data = dynamic_cast<RooDataSet*>(file->Get("data")); // Altere para o nome correto do seu dataset
+	RooDataSet *data = dynamic_cast<RooDataSet*>(file->Get("data"));
 
 	RooRealVar mass("mass", "Massa", 2.8, 3.5);
 	RooRealVar mean("mean", "Média", 3.096916, 3.0, 3.2);
@@ -37,9 +37,9 @@ void exercicio3() {
 	model.paramOn(frame);
 
 	double chi2 = frame->chiSquare();
-	int nParams = model.getParameters(*data)->getSize(); // Número de parâmetros ajustados
-	int nPoints = data->numEntries(); // Número de pontos de dados
-	int ndf = nPoints - nParams; // Calcula ndf
+	int nParams = model.getParameters(*data)->getSize();
+	int nPoints = data->numEntries();
+	int ndf = nPoints - nParams;
 
 	std::cout << "Chi2/ndf: " << chi2 / ndf << std::endl;
 
