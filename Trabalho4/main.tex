@@ -1,0 +1,286 @@
+\documentclass[a4 paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+% Set target color model to RGB
+\usepackage[inner=2.0cm,outer=2.0cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage[rgb]{xcolor}
+\usepackage{verbatim}
+\usepackage{subcaption}
+\usepackage{amsgen,amsmath,amstext,amsbsy,amsopn,amssymb}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true, urlcolor=blue,  linkcolor=blue, citecolor=blue]{hyperref}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{rotating}
+%\usetikzlibrary{through,backgrounds}
+\hypersetup{%
+pdfauthor={Ashudeep Singh},%
+pdftitle={Homework},%
+pdfkeywords={Tikz,latex,bootstrap,uncertaintes},%
+pdfcreator={PDFLaTeX},%
+pdfproducer={PDFLaTeX},%
+}
+%\usetikzlibrary{shadows}
+% \usepackage[francais]{babel}
+\usepackage{booktabs}
+\usepackage{xcolor}
+% Definindo novas cores
+\definecolor{verde}{rgb}{0,0.5,0}
+% Configurando layout para mostrar codigos C++
+\usepackage{listings}
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small, 
+  keywordstyle=\color{blue}, 
+  stringstyle=\color{verde}, 
+  commentstyle=\color{red}, 
+  extendedchars=true, 
+  showspaces=false, 
+  showstringspaces=false, 
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true, 
+  backgroundcolor=\color{green!10},
+  breakautoindent=true, 
+  captionpos=b,
+  xleftmargin=0pt,
+}
+
+%%%%%% macros.tex
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{rem}[thm]{Remark}
+\numberwithin{equation}{section}
+
+\newcommand{\homework}[6]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf Introdução à Análise de dados em FAE \hfill {\small (#2)}} }
+       \vspace{6mm}
+       \hbox to 6.28in { {\Large \hfill #1  \hfill} }
+       \vspace{6mm}
+       \hbox to 6.28in { {\it Professores: {\rm #3} \hfill Name: {\rm #5} } }
+       %\hbox to 6.28in { {\it TA: #4  \hfill #6}}
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{#5 -- #1}{#5 -- #1}
+   \vspace*{4mm}
+}
+
+\newcommand{\problem}[2]{~\\\fbox{\textbf{#1}}\hfill \newline\newline}
+\newcommand{\subproblem}[1]{~\newline\textbf{(#1)}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\Hy}{\mathcal{H}}
+\newcommand{\VS}{\textrm{VS}}
+\newcommand{\solution}{~\newline\textbf{\textit{(Solução)}} }
+
+\newcommand{\bbF}{\mathbb{F}}
+\newcommand{\bbX}{\mathbb{X}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\0}{\mathbf{0}}
+%%%% macros.tex
+
+\begin{document}
+\homework{Exercícios - Aula ROOT}{15/10/2024}{Dilson, Eliza \& Maurício}{}{Diogo Gomes Santos Caffonso de Morais}
+
+\problem{EXERCICIO 1 }
+
+Para o primeiro exercício, foi desenvolvido o código que segue:
+
+\begin{lstlisting}
+#include <RooRealVar.h>
+#include <RooCBShape.h>
+#include <RooDataSet.h>
+#include <RooPlot.h>
+#include <TCanvas.h>
+#include <TStyle.h>
+#include <TPaveText.h>
+
+void exercicio1() {
+	RooRealVar x("x", "x", -10, 10);
+	RooRealVar mean("mean", "Mean", 0, -10, 10);
+	RooRealVar sigma("sigma", "Sigma", 1, 0.1, 5);
+	RooRealVar alpha("alpha", "Alpha", 1.5, 0.1, 5);
+	RooRealVar n("n", "n", 2, 0.1, 10);
+
+	RooCBShape crystalBall("crystalBall", "Crystal Ball PDF", x, mean, sigma, alpha, n);
+
+	RooDataSet* data = crystalBall.generate(x, 10000);
+
+	crystalBall.fitTo(*data);
+
+	RooPlot* xframe = x.frame();
+	data->plotOn(xframe);
+	crystalBall.plotOn(xframe);
+
+	TCanvas* c1 = new TCanvas("c1", "Ajuste Crystal Ball", 800, 600);
+	xframe->Draw();
+
+	gStyle->SetOptStat(1111);
+	gStyle->SetOptFit(1111);
+
+	TPaveText* paramsText = new TPaveText(0.6, 0.7, 0.9, 0.9, "NDC");
+	paramsText->AddText(Form("Mean ajustado = %.3f", mean.getVal()));
+	paramsText->AddText(Form("Sigma ajustado = %.3f", sigma.getVal()));
+	paramsText->AddText(Form("Alpha ajustado = %.3f", alpha.getVal()));
+	paramsText->AddText(Form("n ajustado = %.3f", n.getVal()));
+	paramsText->SetFillColor(0);
+	paramsText->SetTextSize(0.03);
+	paramsText->Draw();
+
+	c1->SaveAs("exercicio1.png");
+}
+\end{lstlisting}
+
+Executado o código acima, tive o seguinte output:
+
+\includegraphics[width=\linewidth]{ex1.png}
+\begin{center}
+    Figura 1: Gráfico da função de fit.
+\end{center}
+
+\newpage
+
+\problem{EXERCICIO 2 }
+
+Para o segundo exercício, foi desenvolvido o código que segue:
+
+\begin{lstlisting}
+#include <iostream>
+#include <cmath>
+#include "TH1F.h"
+#include "TF1.h"
+#include "TCanvas.h"
+#include "TRandom.h"
+
+void exercicio2() {
+
+	int nEvents = 1500;
+	double lambdaTrue = 1.0;
+	double x[nEvents];
+
+	for (int i = 0; i < nEvents; i++) {
+		x[i] = -log(1 - gRandom->Uniform()) / lambdaTrue;
+	}
+
+	TH1F *hist = new TH1F("hist", "Histograma de eventos simulados", 50, 0, 10);
+	for (int i = 0; i < nEvents; i++) {
+		hist->Fill(x[i]);
+	}
+
+	TF1 *fitFunction = new TF1("fitFunction", "[0] * exp(-[1] * x)", 0, 10);
+	fitFunction->SetParameters(nEvents, 1.0);
+	fitFunction->SetParLimits(1, 0.1, 2);
+	hist->Fit("fitFunction", "R");
+
+	double lambdaAdjusted = fitFunction->GetParameter(1);
+	double totalYield = fitFunction->Integral(0, 10);
+ 
+	TCanvas *c1 = new TCanvas("c1", "Ajuste da função exponencial", 800, 600);
+	hist->Draw();
+	fitFunction->Draw("same");
+	std::cout << "Valor ajustado para lambda: " << lambdaAdjusted << std::endl;
+
+	c1->SaveAs("exercicio2.png");
+}
+\end{lstlisting}
+Que gerou o gráfico:
+
+\includegraphics[width=\linewidth]{ex2.png}
+\begin{center}
+    Figura 2: Histograma com função de fit.
+\end{center}
+
+Respondendo às perguntas:
+
+$\lambda=1,03$
+
+$Número total de eventos ajustados: 1500$
+
+Estão dentro das expectativas, já que não desviam muito dos valores propostos.
+
+\newpage
+
+\problem{EXERCICIO 3 }
+
+Para o terceiro exercício, foi desenvolvido o código que segue:
+
+\begin{lstlisting}
+#include <iostream>
+#include "RooDataSet.h"
+#include "RooRealVar.h"
+#include "RooCBShape.h"
+#include "RooPolynomial.h"
+#include "RooAddPdf.h"
+#include "RooPlot.h"
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+
+void exercicio3() {
+	TFile *file = TFile::Open("/home/cms-opendata/FAE_Repo/Trabalho4/ex3/DataSet_lowstat.root");
+	RooDataSet *data = dynamic_cast<RooDataSet*>(file->Get("data"));
+
+	RooRealVar mass("mass", "Massa", 2.8, 3.5);
+	RooRealVar mean("mean", "Média", 3.096916, 3.0, 3.2);
+	RooRealVar sigma("sigma", "Desvio Padrão", 0.05, 0.01, 0.1);
+	RooRealVar alpha("alpha", "Alpha", 1.5);
+	RooRealVar n("n", "n", 0.5, 0, 5);
+	RooCBShape signal("signal", "Sinal J/ψ", mass, mean, sigma, alpha, n);
+    
+	RooRealVar a0("a0", "a0", 0, -10, 10);
+	RooRealVar a1("a1", "a1", 1000, 0, 10000);
+	RooPolynomial background("background", "Fundo", mass, RooArgList(a0, a1));
+    
+	RooRealVar nsig("nsig", "Número de eventos sinal", 1000, 0, 10000);
+	RooRealVar nbkg("nbkg", "Número de eventos fundo", 1000, 0, 10000);
+	RooAddPdf model("model", "Modelo Sinal + Fundo", RooArgList(signal, background), RooArgList(nsig, nbkg));
+    
+	model.fitTo(*data);
+	RooPlot *frame = mass.frame();
+	frame->SetXTitle("Massa (GeV/c^{2})");
+
+	data->plotOn(frame);
+	model.plotOn(frame);
+	model.paramOn(frame);
+
+	double chi2 = frame->chiSquare();
+	int nParams = model.getParameters(*data)->getSize();
+	int nPoints = data->numEntries();
+	int ndf = nPoints - nParams;
+
+	std::cout << "Chi2/ndf: " << chi2 / ndf << std::endl;
+
+	TCanvas *c1 = new TCanvas("c1", "Ajuste da ressonância J/ψ", 800, 600);
+	frame->Draw();
+
+	c1->SaveAs("exercicio3.png");
+}
+\end{lstlisting}
+Que gerou o gráfico:
+
+\includegraphics[width=\linewidth]{ex3.png}
+\begin{center}
+    Figura 3: Gráfico de dispersão função de fit.
+\end{center}
+
+\large $$\chi^{2}/ndf=2,68753\times 10^{-3}$$ \normalsize
+
+Obs.: A razão $\chi^{2}/ndf$ está muito pequena, o que pode levar a um "excesso" de ajuste.
+
+\end{document} 
