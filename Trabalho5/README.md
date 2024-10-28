@@ -1,1 +1,1 @@
-Todas as imagens referentes à tarefa estão na pasta "Imagens", cada uma com seu nome apropriado.
+Todas as imagens referentes à tarefa estão na pasta "Images", cada uma com seu nome apropriado.
