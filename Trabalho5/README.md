@@ -1,1 +1,1 @@
-Todas as imagens referentes à tarefa estão na pasta "Images", cada uma com seu nome apropriado.
+Todas as imagens referentes à tarefa estão na pasta "Images", cada uma com seu nome apropriado. Primeiro passo se refere ao plot das variáveis, enquanto que o segundo passo se refere ao cálculo da massa invariante.
