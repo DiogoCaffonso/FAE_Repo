@@ -1,88 +1,74 @@
-#include <TFile.h>
-#include <TTree.h>
-#include <TTreeReader.h>
-#include <TTreeReaderArray.h>
-#include <TCanvas.h>
-#include <TH1F.h>
-#include <TMath.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
-#include <filesystem>
-
-double calcular_massa_invariante(const std::vector<float>& pt, const std::vector<float>& eta, const std::vector<float>& phi) {
-    if (pt.size() == 2) {
-        return sqrt(2 * pt[0] * pt[1] * (TMath::CosH(eta[0] - eta[1]) - TMath::Cos(phi[0] - phi[1])));
-    }
-    return -1.0;
-}
+#include <TChain.h>
+#include <TFile.h>
+#include <TH1F.h>
+#include <TCanvas.h>
+#include <TLorentzVector.h>
 
 void analise() {
-    std::vector<std::string> diretorios = {
-        "/opendata/eos/opendata/cms/Run2016G/DoubleEG/NANOAOD/UL2016_MiniAODv2_NanoAODv9-v1/100000",
-        "/opendata/eos/opendata/cms/Run2016G/DoubleEG/NANOAOD/UL2016_MiniAODv2_NanoAODv9-v1/1010000",
-        "/opendata/eos/opendata/cms/Run2016G/DoubleEG/NANOAOD/UL2016_MiniAODv2_NanoAODv9-v1/250000"
-    };
+	std::string fileList = "/afs/cern.ch/user/d/dgomessa/Temporary/FAE_Repo/Trabalho7/data.txt";
+	TChain chain("Events");
 
-    std::vector<double> massas_invariantes_com_corte;
-    TH1F* hPT_antes = new TH1F("hPT_antes", "Distribuicao de pT antes do corte", 50, 0, 200);
-    TH1F* hETA_antes = new TH1F("hETA_antes", "Distribuicao de eta antes do corte", 50, -3, 3);
-    TH1F* hPT_depois = new TH1F("hPT_depois", "Distribuicao de pT depois do corte", 50, 0, 200);
-    TH1F* hETA_depois = new TH1F("hETA_depois", "Distribuicao de eta depois do corte", 50, -3, 3);
+	std::ifstream inputFile(fileList);
+	if (!inputFile.is_open()) {
+		std::cerr << "Erro: não foi possível abrir o arquivo " << fileList << std::endl;
+		return;
+	}
 
-    int eventos_totais = 0, eventos_filtrados = 0;
+	std::string line;
+	while (std::getline(inputFile, line)) {
+		if (!line.empty()) {
+			chain.Add(line.c_str());
+		}
+	}
+	inputFile.close();
 
-    for (const auto& dir : diretorios) {
-        for (const auto& entry : std::filesystem::directory_iterator(dir)) {
-            std::string file_path = entry.path();
-            TFile file(file_path.c_str(), "READ");
-            if (!file.IsOpen()) continue;
+	TH1F* h_pT_before = new TH1F("h_pT_before", "Distribuicao de pT antes dos cortes; pT [GeV/c]; Eventos", 50, 0, 100);
+	TH1F* h_eta_before = new TH1F("h_eta_before", "Distribuicao de eta antes dos cortes; #eta; Eventos", 50, -3, 3);
+	TH1F* h_pT_after = new TH1F("h_pT_after", "Distribuicao de pT depois dos cortes; pT [GeV/c]; Eventos", 50, 0, 100);
+	TH1F* h_eta_after = new TH1F("h_eta_after", "Distribuicao de eta depois dos cortes; #eta; Eventos", 50, -3, 3);
 
-            TTreeReader reader("Events", &file);
-            TTreeReaderArray<float> Electron_pt(reader, "Electron_pt");
-            TTreeReaderArray<float> Electron_eta(reader, "Electron_eta");
-            TTreeReaderArray<float> Electron_phi(reader, "Electron_phi");
+	float pt, eta;
+	chain.SetBranchAddress("Muon_pt", &pt);
+	chain.SetBranchAddress("Muon_eta", &eta);
+	
+	
+	Long64_t nEntries = chain.GetEntries();
 
-            while (reader.Next()) {
-                eventos_totais++;
+	for (Long64_t i = 0; i < nEntries; ++i) {
+		chain.GetEntry(i);
+		h_pT_before->Fill(pt);
+		h_eta_before->Fill(eta);
+		if (pt > 20.0 && fabs(eta) < 2.4) {
+			h_pT_after->Fill(pt);
+			h_eta_after->Fill(eta);
+		}
+	}
 
-                for (size_t i = 0; i < Electron_pt.GetSize(); ++i) {
-                    hPT_antes->Fill(Electron_pt[i]);
-                    hETA_antes->Fill(Electron_eta[i]);
+	TCanvas* c1 = new TCanvas("c1", "pT antes e depois dos cortes", 800, 600);
+	h_pT_before->SetLineColor(kBlue);
+        h_pT_after->SetLineColor(kRed);
+	h_pT_before->Draw();
+	h_pT_after->Draw("SAME");
+	c1->BuildLegend();
+	c1->SaveAs("pT_comparacao.png");
 
-                    if (Electron_pt[i] > 10 && std::abs(Electron_eta[i]) < 2.4) { // Cortes em pT > 10 e |eta| < 2.4
-                        hPT_depois->Fill(Electron_pt[i]);
-                        hETA_depois->Fill(Electron_eta[i]);
-                        eventos_filtrados++;
-                    }
-                }
-            }
-        }
-    }
+	TCanvas* c2 = new TCanvas("c2", "Eta antes e depois dos cortes", 800, 600);
+	h_eta_before->SetLineColor(kBlue);
+	h_eta_after->SetLineColor(kRed);
+	h_eta_before->Draw();
+	h_eta_after->Draw("SAME");
+	c2->BuildLegend();
+	c2->SaveAs("eta_comparacao.png");
 
-
-    TCanvas* c1 = new TCanvas("c1", "Comparacoes", 800, 600);
-    hPT_antes->SetLineColor(kRed);
-    hPT_antes->Draw();
-    hPT_depois->SetLineColor(kBlue);
-    hPT_depois->Draw("SAME");
-    c1->SaveAs("comparacao_PT.png");
-
-    TCanvas* c2 = new TCanvas("c2", "Comparacao eta", 800, 600);
-    hETA_antes->SetLineColor(kRed);
-    hETA_antes->Draw();
-    hETA_depois->SetLineColor(kBlue);
-    hETA_depois->Draw("SAME");
-    c2->SaveAs("comparacao_ETA.png");
-
-    std::cout << "Numero de eventos totais: " << eventos_totais << std::endl;
-    std::cout << "Numero de eventos apos cortes: " << eventos_filtrados << std::endl;
-
-    delete hPT_antes;
-    delete hPT_depois;
-    delete hETA_antes;
-    delete hETA_depois;
-    delete c1;
-    delete c2;
+	delete h_pT_before;
+	delete h_eta_before;
+        delete h_pT_after;
+	delete h_eta_after;
+	delete c1;
+	delete c2;
 }
 
-analise();
+
